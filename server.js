@@ -32,19 +32,21 @@ if (!FLOWISE_API_KEY) {
 const parseChatflows = () => {
   try {
     const chatflows = new Map();
-    
+
     // Get all environment variables that don't start with special prefixes
     const chatflowVars = Object.entries(process.env).filter(([key]) => {
-      return !key.startsWith('_') && 
-             !key.startsWith('npm_') && 
-             !key.startsWith('yarn_') && 
-             !key.startsWith('VSCODE_') && 
-             key !== 'API_HOST' && 
-             key !== 'FLOWISE_API_KEY' &&
-             key !== 'PORT' &&
-             key !== 'HOST' &&
-             key !== 'BASE_URL' &&
-             key !== 'NODE_ENV';
+      return (
+        !key.startsWith('_') &&
+        !key.startsWith('npm_') &&
+        !key.startsWith('yarn_') &&
+        !key.startsWith('VSCODE_') &&
+        key !== 'API_HOST' &&
+        key !== 'FLOWISE_API_KEY' &&
+        key !== 'PORT' &&
+        key !== 'HOST' &&
+        key !== 'BASE_URL' &&
+        key !== 'NODE_ENV'
+      );
     });
 
     if (chatflowVars.length === 0) {
@@ -52,15 +54,13 @@ const parseChatflows = () => {
       process.exit(1);
     }
 
-    const defaultDomains = process.env.NODE_ENV === 'production' 
-      ? [] 
-      : ['http://localhost:5678'];
+    const defaultDomains = process.env.NODE_ENV === 'production' ? [] : ['http://localhost:5678'];
 
     for (const [identifier, value] of chatflowVars) {
-      const parts = value.split(',').map(s => s.trim());
+      const parts = value.split(',').map((s) => s.trim());
       const chatflowId = parts[0];
       const configuredDomains = parts.length > 1 ? parts.slice(1) : [];
-      
+
       const domains = [...new Set([...defaultDomains, ...configuredDomains])];
 
       if (!chatflowId) {
@@ -91,9 +91,8 @@ const parseChatflows = () => {
 const chatflows = parseChatflows();
 
 const getChatflowDetails = (identifier) => {
-
   let chatflow = chatflows.get(identifier);
-  
+
   if (!chatflow) {
     const lowerIdentifier = identifier.toLowerCase();
     for (const [key, value] of chatflows.entries()) {
@@ -103,7 +102,7 @@ const getChatflowDetails = (identifier) => {
       }
     }
   }
-  
+
   if (!chatflow) {
     throw new Error(`Chatflow not found: ${identifier}`);
   }
@@ -117,8 +116,8 @@ const isValidUUID = (str) => {
 
 const isValidChatflowConfig = (value) => {
   if (!value) return false;
-  const parts = value.split(',').map(s => s.trim());
-  return isValidUUID(parts[0]); 
+  const parts = value.split(',').map((s) => s.trim());
+  return isValidUUID(parts[0]);
 };
 
 console.info('\x1b[36m%s\x1b[0m', 'Configured chatflows:');
@@ -202,9 +201,6 @@ const validateApiKey = (req, res, next) => {
   const userAgent = req.headers['user-agent'];
   const acceptLanguage = req.headers['accept-language'];
   const accept = req.headers['accept'];
-  const secChUa = req.headers['sec-ch-ua'];
-  const secChUaPlatform = req.headers['sec-ch-ua-platform'];
-  const secChUaMobile = req.headers['sec-ch-ua-mobile'];
   const secFetchMode = req.headers['sec-fetch-mode'];
   const secFetchSite = req.headers['sec-fetch-site'];
 
@@ -212,10 +208,6 @@ const validateApiKey = (req, res, next) => {
     userAgent &&
     acceptLanguage &&
     accept &&
-    secChUa &&
-    secChUaPlatform &&
-    secChUaMobile &&
-    ['?0', '?1'].includes(secChUaMobile) &&
     secFetchMode === 'cors' &&
     secFetchSite &&
     ['same-origin', 'same-site', 'cross-site'].includes(secFetchSite)
@@ -393,10 +385,10 @@ const server = app.listen(PORT, HOST, () => {
   const addr = server.address();
   if (!addr || typeof addr === 'string') return;
 
-  const baseUrl = process.env.BASE_URL || 
-                 process.env.NODE_ENV === 'production' 
-                   ? `https://${process.env.HOST || 'localhost'}`
-                   : `http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${addr.port}`;
-  
+  const baseUrl =
+    process.env.BASE_URL || process.env.NODE_ENV === 'production'
+      ? `https://${process.env.HOST || 'localhost'}`
+      : `http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${addr.port}`;
+
   generateEmbedScript(baseUrl);
 });

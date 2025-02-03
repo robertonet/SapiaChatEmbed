@@ -143,6 +143,8 @@ You can also customize chatbot with different configuration
         buttonTextColor: 'white',
         blurredBackgroundColor: 'rgba(0, 0, 0, 0.4)', //The color of the blurred background that overlays the chat interface
         backgroundColor: 'white',
+        denyButtonText: 'Cancel',
+        denyButtonBgColor: '#ef4444',
       },
       customCSS: ``, // Add custom CSS styles. Use !important to override default styles
       chatWindow: {
@@ -150,6 +152,8 @@ You can also customize chatbot with different configuration
         showAgentMessages: true,
         title: 'Flowise Bot',
         titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
+        titleBackgroundColor: '#3B81F6',
+        titleTextColor: '#ffffff',
         welcomeMessage: 'Hello! This is custom welcome message',
         errorMessage: 'This is a custom error message',
         backgroundColor: '#ffffff',
@@ -275,7 +279,7 @@ yarn start
 
 ```html
 <!-- public/index.html -->
-  chatflowid: 'your-identifier-here' // Must match an identifier from your .env
+chatflowid: 'your-identifier-here' // Must match an identifier from your .env
 ```
 
 **Important Notes:**
